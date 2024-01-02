@@ -1,0 +1,1 @@
+# blokus-pattern-enumeration
