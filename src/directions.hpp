@@ -16,13 +16,11 @@ Direction default_right(0, 1);
 Direction default_left(0, -1);
 
 class Directions {
-    int mode;
-    Direction up, down, left, right;
     public:
     std::array<Direction, DIRECTION_SIZE> directions{};
 
    public:
-    Directions(int mode_) : mode(mode_) {
+    Directions(int mode_) {
         assert(0 <= mode_ and mode_ <= 7);
         init(mode_);
     }
