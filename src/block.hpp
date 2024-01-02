@@ -25,3 +25,15 @@ struct Block {
         return block_directions.size();
     }
 };
+
+struct Blocks {
+    Direction up, down, right, left;
+    Blocks(int mode_) {
+        assert(0 <= mode_ and mode_ <= 7);
+        Directions directions(mode_);
+        up = directions.directions[0];
+        down = directions.directions[1];
+        right = directions.directions[2];
+        left = directions.directions[3];
+    }
+};
