@@ -10,4 +10,18 @@ struct Block {
             block_directions.push_back(block_direction);
         }
     }
+
+    std::vector<Direction>::const_iterator begin() const {
+        return block_directions.begin();
+    }
+    std::vector<Direction>::const_iterator end() const {
+        return block_directions.end();
+    }
+
+    const Direction& operator[](std::size_t index) const {
+        return block_directions[index];
+    }
+    std::size_t size() const {
+        return block_directions.size();
+    }
 };
