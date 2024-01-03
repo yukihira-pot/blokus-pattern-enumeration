@@ -1,6 +1,8 @@
 #include <array>
+#include <bitset>
 #include <cassert>
 #include <fstream>
+#include <iostream>
 
 #pragma once
 #include "blocks.hpp"
@@ -71,7 +73,7 @@ class Field {
                 break;
             }
         }
-        if(!has_my_block_in_diagonal_position) {
+        if(current_turn > 3 and !has_my_block_in_diagonal_position) {
             return false;
         }
 
@@ -81,20 +83,20 @@ class Field {
         // .....
         // .....
         // 2...1
-        if (current_turn == 0) {
-            if (!(x == 0 and y == FIELD_WIDTH - 1)) {
+        if(current_turn == 0) {
+            if(!(x == 0 and y == FIELD_WIDTH - 1)) {
                 return false;
             }
-        } else if (current_turn == 1) {
-            if (!(x == FIELD_WIDTH - 1 and y == FIELD_WIDTH - 1)) {
+        } else if(current_turn == 1) {
+            if(!(x == FIELD_WIDTH - 1 and y == FIELD_WIDTH - 1)) {
                 return false;
             }
-        } else if (current_turn == 2) {
-            if (!(x == FIELD_WIDTH - 1 and y == 0)) {
+        } else if(current_turn == 2) {
+            if(!(x == FIELD_WIDTH - 1 and y == 0)) {
                 return false;
             }
-        } else if (current_turn == 3) {
-            if (!(x == 0 and y == 0)) {
+        } else if(current_turn == 3) {
+            if(!(x == 0 and y == 0)) {
                 return false;
             }
         }
@@ -111,7 +113,8 @@ class Field {
             }
             result |= _field[x][y];
         }
-        return result != 0;
+
+        return result == 0;
     }
 
     /// @brief 座標 (x, y) にブロックを置く
@@ -163,6 +166,8 @@ class Field {
     /// @param block 除去するブロック
     void remove(unsigned short x, unsigned short y, Block &block) {
         assert(is_able_to_remove(x, y, block));
+        // ターンを 1 減らす
+        current_turn--;
         // ブロックが置いてあるマスをすべて 0 にする
         _field[x][y] = 0;
         for(const Direction &direction : block) {
@@ -186,5 +191,16 @@ class Field {
             }
             file << '\n';
         }
+    }
+
+    void show() {
+        for(const auto &row : _field) {
+            for(const auto &cell : row) {
+                std::cerr << std::setw(2) << std::setfill('0') << (cell & 0b11) << ","
+                          << std::setw(3) << std::setfill('0') << (cell >> 2) << " ";
+            }
+            std::cerr << std::endl;
+        }
+        std::cerr << std::endl;
     }
 };
