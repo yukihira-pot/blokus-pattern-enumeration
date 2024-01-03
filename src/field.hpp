@@ -2,6 +2,7 @@
 #include <cassert>
 #include <fstream>
 
+#pragma once
 #include "blocks.hpp"
 #include "directions.hpp"
 #include "players.hpp"
@@ -16,7 +17,7 @@ constexpr std::size_t FIELD_WIDTH = 20;
 /// 0000_1001 であれば、そのマスはプレイヤー 1 が 2
 /// 手目に置いたブロックによって使われていることを表す.
 class Field {
-    std::array<std::array<short, FIELD_WIDTH>, FIELD_WIDTH> _field;
+    std::array<std::array<short, FIELD_WIDTH>, FIELD_WIDTH> _field{};
     unsigned short current_turn = 0;
 
    public:

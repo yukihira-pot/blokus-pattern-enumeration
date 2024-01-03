@@ -1,6 +1,7 @@
 #include <cassert>
 #include <vector>
 
+#pragma once
 #include "directions.hpp"
 
 struct Block {
