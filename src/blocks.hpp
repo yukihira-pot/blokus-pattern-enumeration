@@ -4,6 +4,8 @@
 #pragma once
 #include "directions.hpp"
 
+constexpr unsigned short BLOCK_SIZE = 21;
+
 struct Block {
     std::vector<Direction> block_directions;
     Block(std::initializer_list<Direction> block_list) {
@@ -176,7 +178,7 @@ struct Blocks {
     // .....
     Block pentomino_z = Block({left, up, up, left});
 
-    std::array<Block, 21> blocks = {
+    std::array<Block, BLOCK_SIZE> blocks = {
         monomino,           domino,           tromino_i,   tromino_l,
         tetromino_straight, tetromino_square, tetromino_t, tetromino_l,
         tetromino_skew,     pentomino_f,      pentomino_i, pentomino_l,
