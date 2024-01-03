@@ -28,6 +28,10 @@ class Field {
     std::array<std::array<short, FIELD_WIDTH>, FIELD_WIDTH> _field{};
     unsigned short current_turn = 0;
 
+    bool is_in_field(unsigned short x, unsigned short y) {
+        return 0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH;
+    }
+
    public:
     Field() {}
 
@@ -38,14 +42,13 @@ class Field {
     /// @param block 使用するブロック
     bool is_able_to_place(unsigned short x, unsigned short y, Block& block,
                           Player& player) {
-        assert(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH);
+        assert(is_in_field(x, y));
 
         // 上下左右の 4 近傍に自分が置いたブロックがないかチェック
         for (unsigned short i = 0; i < 4; i++) {
             unsigned short nx = x + adjacent_neighbouring_dx[i];
             unsigned short ny = y + adjacent_neighbouring_dy[i];
-            if (!(0 <= nx and x < FIELD_WIDTH and 0 <= ny and
-                  ny < FIELD_WIDTH)) {
+            if (!is_in_field(nx, ny)) {
                 continue;
             }
             // 上下左右の隣接マスに自分が置いていたら false を返す
@@ -59,8 +62,7 @@ class Field {
         for (unsigned short i = 0; i < 4; i++) {
             unsigned short nx = x + diagonal_neighbouring_dx[i];
             unsigned short ny = y + diagonal_neighbouring_dy[i];
-            if (!(0 <= nx and x < FIELD_WIDTH and 0 <= ny and
-                  ny < FIELD_WIDTH)) {
+            if (!is_in_field(nx, ny)) {
                 continue;
             }
             // 斜めの隣接マスの少なくとも 1 つに自分が置いていればよい
@@ -80,7 +82,7 @@ class Field {
             x += direction.dx;
             y += direction.dy;
             // フィールド外からはみ出ていたら false を返す
-            if (!(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH)) {
+            if (!is_in_field(x, y)) {
                 return false;
             }
             result |= _field[x][y];
@@ -114,13 +116,13 @@ class Field {
     /// @param y y 座標
     /// @param block 除去するブロック
     bool is_able_to_remove(unsigned short x, unsigned short y, Block& block) {
-        assert(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH);
+        assert(is_in_field(x, y));
         unsigned short field_value = _field[x][y];
         for (const Direction& direction : block) {
             x += direction.dx;
             y += direction.dy;
             // フィールド外からはみ出ていたら false を返す
-            if (!(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH)) {
+            if (!is_in_field(x, y)) {
                 return false;
             }
             // 指定していた形の通りにブロックが置かれていなければ false を返す
