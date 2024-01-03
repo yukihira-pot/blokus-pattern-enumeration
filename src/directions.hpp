@@ -30,12 +30,16 @@ class Directions {
         std::array<Direction, DIRECTION_SIZE> directions_impl{};
         // mode が 0 から 7 で 4 方位と裏表を設定する
         if (mode <= 3) {
-            directions_impl = {default_up, default_down, default_right,
-                               default_left};
+            directions_impl[0] = Direction(default_up.dx, default_up.dy);
+            directions_impl[1] = Direction(default_down.dx, default_down.dy);
+            directions_impl[2] = Direction(default_right.dx, default_right.dy);
+            directions_impl[3] = Direction(default_left.dx, default_left.dy);
         } else {
             // 左右を逆にして裏返しとする
-            directions_impl = {default_up, default_down, default_left,
-                               default_right};
+            directions_impl[0] = Direction(default_up.dx, default_up.dy);
+            directions_impl[1] = Direction(default_down.dx, default_down.dy);
+            directions_impl[2] = Direction(default_left.dx, default_left.dy);
+            directions_impl[3] = Direction(default_right.dx, default_right.dy);
         }
         for (unsigned short i = 0; i < DIRECTION_SIZE; i++) {
             directions[i] = directions_impl[(i + mode) % DIRECTION_SIZE];
