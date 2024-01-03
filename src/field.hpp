@@ -21,8 +21,8 @@ constexpr std::size_t FIELD_WIDTH = 20;
 /// (1-indexed), 下位 2 bit はプレイヤー (00 ~ 11) を表す
 /// 例：
 /// マスの値が 0000_0000
-/// であれば、そのマスにはどのブロックも置かれていないことを表す. マスの値が
-/// 0000_1001 であれば、そのマスはプレイヤー 1 が 2
+/// であれば, そのマスにはどのブロックも置かれていないことを表す. マスの値が
+/// 0000_1001 であれば, そのマスはプレイヤー 1 が 2
 /// 手目に置いたブロックによって使われていることを表す.
 class Field {
     std::array<std::array<short, FIELD_WIDTH>, FIELD_WIDTH> _field{};
@@ -36,14 +36,16 @@ class Field {
     /// @param x x 座標
     /// @param y y 座標
     /// @param block 使用するブロック
-    bool is_able_to_place(unsigned short x, unsigned short y, Block& block, Player& player) {
+    bool is_able_to_place(unsigned short x, unsigned short y, Block& block,
+                          Player& player) {
         assert(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH);
 
         // 上下左右の 4 近傍に自分が置いたブロックがないかチェック
         for (unsigned short i = 0; i < 4; i++) {
             unsigned short nx = x + adjacent_neighbouring_dx[i];
             unsigned short ny = y + adjacent_neighbouring_dy[i];
-            if (!(0 <= nx and x < FIELD_WIDTH and 0 <= ny and ny < FIELD_WIDTH)) {
+            if (!(0 <= nx and x < FIELD_WIDTH and 0 <= ny and
+                  ny < FIELD_WIDTH)) {
                 continue;
             }
             // 上下左右の隣接マスに自分が置いていたら false を返す
@@ -57,7 +59,8 @@ class Field {
         for (unsigned short i = 0; i < 4; i++) {
             unsigned short nx = x + diagonal_neighbouring_dx[i];
             unsigned short ny = y + diagonal_neighbouring_dy[i];
-            if (!(0 <= nx and x < FIELD_WIDTH and 0 <= ny and ny < FIELD_WIDTH)) {
+            if (!(0 <= nx and x < FIELD_WIDTH and 0 <= ny and
+                  ny < FIELD_WIDTH)) {
                 continue;
             }
             // 斜めの隣接マスの少なくとも 1 つに自分が置いていればよい
@@ -70,7 +73,8 @@ class Field {
             return false;
         }
 
-        // ブロックを配置できるか (ブロックを配置したいマスがすべて 0000_0000 か) をチェック
+        // ブロックを配置できるか (ブロックを配置したいマスがすべて 0000_0000
+        // か) をチェック
         unsigned short result = _field[x][y];
         for (const Direction& direction : block) {
             x += direction.dx;
@@ -94,7 +98,7 @@ class Field {
         assert(is_able_to_place(x, y, block, player));
         // ターンを 1 増やす
         current_turn++;
-        // 埋めるべきフィールドの値は、上位 6 bit をターン、下位 2 bit
+        // 埋めるべきフィールドの値は, 上位 6 bit をターン, 下位 2 bit
         // をプレイヤーの番号としたもの
         unsigned short field_value = (current_turn << 2) | player;
         _field[x][y] = field_value;
