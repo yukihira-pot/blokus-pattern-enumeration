@@ -33,3 +33,6 @@
 
 # outputs
 output/*
+
+# vscode settings
+.vscode/*
