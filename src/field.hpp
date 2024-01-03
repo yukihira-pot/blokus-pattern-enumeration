@@ -75,6 +75,30 @@ class Field {
             return false;
         }
 
+        // 各プレイヤー 1 ターン目であれば、四隅以外は false を返す
+        // 3...0
+        // .....
+        // .....
+        // .....
+        // 2...1
+        if (current_turn == 0) {
+            if (!(x == 0 and y == FIELD_WIDTH - 1)) {
+                return false;
+            }
+        } else if (current_turn == 1) {
+            if (!(x == FIELD_WIDTH - 1 and y == FIELD_WIDTH - 1)) {
+                return false;
+            }
+        } else if (current_turn == 2) {
+            if (!(x == FIELD_WIDTH - 1 and y == 0)) {
+                return false;
+            }
+        } else if (current_turn == 3) {
+            if (!(x == 0 and y == 0)) {
+                return false;
+            }
+        }
+
         // ブロックを配置できるか (ブロックを配置したいマスがすべて 0000_0000
         // か) をチェック
         unsigned short result = _field[x][y];
