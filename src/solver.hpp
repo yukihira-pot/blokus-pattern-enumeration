@@ -3,6 +3,7 @@
 #include <chrono>
 #include <ctime>
 #include <iomanip>
+#include <iostream>
 #include <sstream>
 
 #include "blocks.hpp"
@@ -20,13 +21,16 @@ class Solver {
     std::array<std::array<Block, TOTAL_BLOCK_SIZE>, PLAYER_SIZE> _blocks{};
     // 各プレイヤーについて, どのブロックが使用済みかどうかを借りする配列.
     // _used[i][j] := プレイヤー i のブロック j が使用済みかどうか
-    std::array<std::array<bool, TOTAL_BLOCK_SIZE>, PLAYER_SIZE> _used{};
+    std::array<std::array<bool, BLOCK_SIZE>, PLAYER_SIZE> _used{};
 
   public:
     Solver() { setup_blocks(); }
+    void solve() {
+        place(PLAYER_A);
+    }
 
   private:
-    /// @brief player を指定し、
+    /// @brief player を指定し、バックトラックでブロックを置く
     /// @param player 
     void place(const Player &player) {
         // すべてブロックを使っていれば return
@@ -43,18 +47,19 @@ class Solver {
             for(unsigned short y = 0; y < FIELD_WIDTH; y++) {
                 for(unsigned short block_idx = 0; block_idx < TOTAL_BLOCK_SIZE;
                     block_idx++) {
-                    if(_used[player][block_idx]) {
+                    if(_used[player][block_idx / BLOCK_MODE_SIZE]) {
                         continue;
                     }
                     if(_field.is_able_to_place(x, y, _blocks[player][block_idx],
                                                player)) {
                         // ブロックを配置
                         _field.place(x, y, _blocks[player][block_idx], player);
-                        _used[player][block_idx] = true;
+                        _used[player][block_idx / BLOCK_MODE_SIZE] = true;
                         place(next_player(player));
+                        _field.show();
                         // ブロックを削除 (バックトラック)
                         _field.remove(x, y, _blocks[player][block_idx]);
-                        _used[player][block_idx] = false;
+                        _used[player][block_idx / BLOCK_MODE_SIZE] = false;
                     }
                 }
             }
@@ -76,7 +81,7 @@ class Solver {
         }
     }
 
-    bool is_block_used(const std::array<bool, TOTAL_BLOCK_SIZE> &block) {
+    bool is_block_used(const std::array<bool, BLOCK_SIZE> &block) {
         return std::all_of(block.begin(), block.end(),
                            [](bool y) { return y; });
     }
@@ -84,7 +89,7 @@ class Solver {
     bool is_all_blocks_used() {
         return std::all_of(
             _used.begin(), _used.end(),
-            [this](const std::array<bool, TOTAL_BLOCK_SIZE> &block) {
+            [this](const std::array<bool, BLOCK_SIZE> &block) {
                 return is_block_used(block);
             });
     }
