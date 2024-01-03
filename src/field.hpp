@@ -8,11 +8,11 @@
 #include "players.hpp"
 
 // 上下左右の 4 近傍
-constexpr unsigned short adjacent_neighbouring_dx[] = {-1, 1, 0, 0};
-constexpr unsigned short adjacent_neighbouring_dy[] = {0, 0, -1, 1};
+constexpr short adjacent_neighbouring_dx[] = {-1, 1, 0, 0};
+constexpr short adjacent_neighbouring_dy[] = {0, 0, -1, 1};
 // 斜めの 4 近傍
-constexpr unsigned short diagonal_neighbouring_dx[] = {-1, -1, 1, 1};
-constexpr unsigned short diagonal_neighbouring_dy[] = {-1, 1, -1, 1};
+constexpr short diagonal_neighbouring_dx[] = {-1, -1, 1, 1};
+constexpr short diagonal_neighbouring_dy[] = {-1, 1, -1, 1};
 
 // フィールドの縦横の長さ
 constexpr std::size_t FIELD_WIDTH = 20;
@@ -46,8 +46,8 @@ class Field {
 
         // 上下左右の 4 近傍に自分が置いたブロックがないかチェック
         for(unsigned short i = 0; i < 4; i++) {
-            unsigned short nx = x + adjacent_neighbouring_dx[i];
-            unsigned short ny = y + adjacent_neighbouring_dy[i];
+            short nx = x + adjacent_neighbouring_dx[i];
+            short ny = y + adjacent_neighbouring_dy[i];
             if(!is_in_field(nx, ny)) {
                 continue;
             }
@@ -60,8 +60,8 @@ class Field {
         // 斜めの 4 近傍に自分が置いたブロックが少なくとも 1 つあるかチェック
         bool has_my_block_in_diagonal_position = false;
         for(unsigned short i = 0; i < 4; i++) {
-            unsigned short nx = x + diagonal_neighbouring_dx[i];
-            unsigned short ny = y + diagonal_neighbouring_dy[i];
+            short nx = x + diagonal_neighbouring_dx[i];
+            short ny = y + diagonal_neighbouring_dy[i];
             if(!is_in_field(nx, ny)) {
                 continue;
             }
