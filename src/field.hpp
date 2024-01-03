@@ -1,5 +1,6 @@
 #include <array>
 #include <cassert>
+#include <fstream>
 
 #include "blocks.hpp"
 #include "directions.hpp"
@@ -84,7 +85,7 @@ class Field {
         return true;
     }
 
-    /// @brief 座標 (x, y) からブロック block を除去する. 
+    /// @brief 座標 (x, y) からブロック block を除去する.
     /// @param x x 座標
     /// @param y y 座標
     /// @param block 除去するブロック
@@ -96,6 +97,22 @@ class Field {
             x += direction.dx;
             y += direction.dy;
             _field[x][y] = 0;
+        }
+    }
+
+    /// @brief _field を指定したファイルパスに出力する
+    /// @param file_path 出力先のファイルパス
+    void save_to_file(const std::string& file_path) {
+        std::ofstream file(file_path);
+        if (!file) {
+            throw std::runtime_error("Failed to open file: " + file_path);
+        }
+
+        for (const auto& row : _field) {
+            for (const auto& cell : row) {
+                file << cell << ' ';
+            }
+            file << '\n';
         }
     }
 };
