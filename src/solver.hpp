@@ -28,7 +28,7 @@ class Solver {
   private:
     /// @brief player を指定し、
     /// @param player 
-    void place_one_turn(const Player &player) {
+    void place(const Player &player) {
         // すべてブロックを使っていれば return
         if(is_all_blocks_used()) {
             auto t = std::time(nullptr);
@@ -51,7 +51,7 @@ class Solver {
                         // ブロックを配置
                         _field.place(x, y, _blocks[player][block_idx], player);
                         _used[player][block_idx] = true;
-                        place_one_turn(next_player(player));
+                        place(next_player(player));
                         // ブロックを削除 (バックトラック)
                         _field.remove(x, y, _blocks[player][block_idx]);
                         _used[player][block_idx] = false;
