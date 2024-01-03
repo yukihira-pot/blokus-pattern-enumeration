@@ -26,13 +26,13 @@ constexpr std::size_t FIELD_WIDTH = 20;
 /// 手目に置いたブロックによって使われていることを表す.
 class Field {
     std::array<std::array<short, FIELD_WIDTH>, FIELD_WIDTH> _field{};
-    unsigned short current_turn = 0;
 
     bool is_in_field(unsigned short x, unsigned short y) {
         return 0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH;
     }
 
    public:
+    unsigned short current_turn = 0;
     Field() {}
 
     /// @brief 座標 (x, y) にブロックを配置可能か判断する.
