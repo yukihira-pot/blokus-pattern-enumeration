@@ -27,6 +27,7 @@ class Field {
     /// @param y y 座標
     /// @param block 使用するブロック
     bool is_able_to_place(unsigned short x, unsigned short y, Block& block) {
+        assert(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH);
         unsigned short result = _field[x][y];
         for (const Direction& direction : block) {
             x += direction.dx;
@@ -58,6 +59,43 @@ class Field {
             x += direction.dx;
             y += direction.dy;
             _field[x][y] = field_value;
+        }
+    }
+
+    /// @brief 座標 (x, y) からブロック block を除去可能か判断する.
+    /// @param x x 座標
+    /// @param y y 座標
+    /// @param block 除去するブロック
+    bool is_able_to_remove(unsigned short x, unsigned short y, Block& block) {
+        assert(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH);
+        unsigned short field_value = _field[x][y];
+        for (const Direction& direction : block) {
+            x += direction.dx;
+            y += direction.dy;
+            // フィールド外からはみ出ていたら false を返す
+            if (!(0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH)) {
+                return false;
+            }
+            // 指定していた形の通りにブロックが置かれていなければ false を返す
+            if (_field[x][y] != field_value) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /// @brief 座標 (x, y) からブロック block を除去する. 
+    /// @param x x 座標
+    /// @param y y 座標
+    /// @param block 除去するブロック
+    void remove(unsigned short x, unsigned short y, Block& block) {
+        assert(is_able_to_remove(x, y, block));
+        // ブロックが置いてあるマスをすべて 0 にする
+        _field[x][y] = 0;
+        for (const Direction& direction : block) {
+            x += direction.dx;
+            y += direction.dy;
+            _field[x][y] = 0;
         }
     }
 };
