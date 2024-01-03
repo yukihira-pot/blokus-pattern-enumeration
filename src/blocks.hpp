@@ -6,6 +6,7 @@
 
 constexpr unsigned short BLOCK_SIZE = 21;
 constexpr unsigned short BLOCK_MODE_SIZE = 8;
+constexpr unsigned short TOTAL_BLOCK_SIZE = BLOCK_SIZE * BLOCK_MODE_SIZE;
 
 struct Block {
     std::vector<Direction> block_directions;
