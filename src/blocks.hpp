@@ -5,6 +5,7 @@
 #include "directions.hpp"
 
 constexpr unsigned short BLOCK_SIZE = 21;
+constexpr unsigned short BLOCK_MODE_SIZE = 8;
 
 struct Block {
     std::vector<Direction> block_directions;
@@ -29,6 +30,8 @@ struct Block {
 
 struct Blocks {
     Direction up, down, right, left;
+    std::array<Block, BLOCK_SIZE> blocks{};
+
     Blocks(int mode_) {
         assert(0 <= mode_ and mode_ <= 7);
         Directions directions(mode_);
@@ -36,153 +39,159 @@ struct Blocks {
         down = directions.directions[1];
         right = directions.directions[2];
         left = directions.directions[3];
+        setup_blocks();
     }
 
-    // ...
-    // .s.
-    // ...
-    Block monomino = Block({});
+    const Block& operator[](std::size_t index) const { return blocks[index]; }
+    std::size_t size() const { return blocks.size(); }
 
-    // ...
-    // .#.
-    // .s.
-    // ...
-    Block domino = Block({up});
+    void setup_blocks() {
+        // ...
+        // .s.
+        // ...
+        Block monomino = Block({});
 
-    // ...
-    // .#.
-    // .#.
-    // .s.
-    // ...
-    Block tromino_i = Block({up, up});
+        // ...
+        // .#.
+        // .s.
+        // ...
+        Block domino = Block({up});
 
-    // ....
-    // .#..
-    // .#s.
-    // ....
-    Block tromino_l = Block({left, up});
+        // ...
+        // .#.
+        // .#.
+        // .s.
+        // ...
+        Block tromino_i = Block({up, up});
 
-    // .....
-    // ###s.
-    // .....
-    Block tetromino_straight = Block({left, left, left});
+        // ....
+        // .#..
+        // .#s.
+        // ....
+        Block tromino_l = Block({left, up});
 
-    // ....
-    // .##.
-    // .#s.
-    // ....
-    Block tetromino_square = Block({left, down, right});
+        // .....
+        // ###s.
+        // .....
+        Block tetromino_straight = Block({left, left, left});
 
-    // .....
-    // .##s.
-    // ..#..
-    // .....
-    Block tetromino_t = Block({left, down, up, left});
+        // ....
+        // .##.
+        // .#s.
+        // ....
+        Block tetromino_square = Block({left, down, right});
 
-    // ....
-    // .#..
-    // .#..
-    // .#s.
-    // ....
-    Block tetromino_l = Block({left, up, up});
+        // .....
+        // .##s.
+        // ..#..
+        // .....
+        Block tetromino_t = Block({left, down, up, left});
 
-    // .....
-    // ..#s.
-    // .##..
-    // .....
-    Block tetromino_skew = Block({left, down, left});
+        // ....
+        // .#..
+        // .#..
+        // .#s.
+        // ....
+        Block tetromino_l = Block({left, up, up});
 
-    // .....
-    // ..#s.
-    // .##..
-    // ..#..
-    // .....
-    Block pentomino_f = Block({left, down, left, right, down});
+        // .....
+        // ..#s.
+        // .##..
+        // .....
+        Block tetromino_skew = Block({left, down, left});
 
-    // ...
-    // .#.
-    // .#.
-    // .#.
-    // .#.
-    // .s.
-    // ...
-    Block pentomino_i = Block({up, up, up, up});
+        // .....
+        // ..#s.
+        // .##..
+        // ..#..
+        // .....
+        Block pentomino_f = Block({left, down, left, right, down});
 
-    // ....
-    // .#..
-    // .#..
-    // .#..
-    // .#s.
-    // ....
-    Block pentomino_l = Block({left, up, up, up});
+        // ...
+        // .#.
+        // .#.
+        // .#.
+        // .#.
+        // .s.
+        // ...
+        Block pentomino_i = Block({up, up, up, up});
 
-    // ....
-    // ..#.
-    // ..#.
-    // .##.
-    // .s..
-    // ....
-    Block pentomino_n = Block({up, right, up, up});
+        // ....
+        // .#..
+        // .#..
+        // .#..
+        // .#s.
+        // ....
+        Block pentomino_l = Block({left, up, up, up});
 
-    // ....
-    // .##.
-    // .##.
-    // .s..
-    // ....
-    Block pentomino_p = Block({up, up, right, down});
+        // ....
+        // ..#.
+        // ..#.
+        // .##.
+        // .s..
+        // ....
+        Block pentomino_n = Block({up, right, up, up});
 
-    // .....
-    // .###.
-    // ..#..
-    // ..s..
-    // .....
-    Block pentomino_t = Block({up, up, left, right, right});
+        // ....
+        // .##.
+        // .##.
+        // .s..
+        // ....
+        Block pentomino_p = Block({up, up, right, down});
 
-    // .....
-    // .#.s.
-    // .###.
-    // .....
-    Block pentomino_u = Block({down, left, left, up});
+        // .....
+        // .###.
+        // ..#..
+        // ..s..
+        // .....
+        Block pentomino_t = Block({up, up, left, right, right});
 
-    // .....
-    // .#...
-    // .#...
-    // .##s.
-    // .....
-    Block pentomino_v = Block({left, left, up, up});
+        // .....
+        // .#.s.
+        // .###.
+        // .....
+        Block pentomino_u = Block({down, left, left, up});
 
-    // .....
-    // .#...
-    // .##..
-    // ..#s.
-    // .....
-    Block pentomino_w = Block({left, up, left, up});
+        // .....
+        // .#...
+        // .#...
+        // .##s.
+        // .....
+        Block pentomino_v = Block({left, left, up, up});
 
-    // .....
-    // ..#..
-    // .###.
-    // ..s..
-    // .....
-    Block pentomino_x = Block({up, left, right, right, left, up});
+        // .....
+        // .#...
+        // .##..
+        // ..#s.
+        // .....
+        Block pentomino_w = Block({left, up, left, up});
 
-    // ......
-    // ...#..
-    // .###s.
-    // ......
-    Block pentomino_y = Block({left, up, down, left, left});
+        // .....
+        // ..#..
+        // .###.
+        // ..s..
+        // .....
+        Block pentomino_x = Block({up, left, right, right, left, up});
 
-    // .....
-    // .##..
-    // ..#..
-    // ..#s.
-    // .....
-    Block pentomino_z = Block({left, up, up, left});
+        // ......
+        // ...#..
+        // .###s.
+        // ......
+        Block pentomino_y = Block({left, up, down, left, left});
 
-    std::array<Block, BLOCK_SIZE> blocks = {
-        monomino,           domino,           tromino_i,   tromino_l,
-        tetromino_straight, tetromino_square, tetromino_t, tetromino_l,
-        tetromino_skew,     pentomino_f,      pentomino_i, pentomino_l,
-        pentomino_n,        pentomino_p,      pentomino_t, pentomino_u,
-        pentomino_v,        pentomino_w,      pentomino_x, pentomino_y,
-        pentomino_z};
+        // .....
+        // .##..
+        // ..#..
+        // ..#s.
+        // .....
+        Block pentomino_z = Block({left, up, up, left});
+
+        blocks = {
+            monomino,           domino,           tromino_i,   tromino_l,
+            tetromino_straight, tetromino_square, tetromino_t, tetromino_l,
+            tetromino_skew,     pentomino_f,      pentomino_i, pentomino_l,
+            pentomino_n,        pentomino_p,      pentomino_t, pentomino_u,
+            pentomino_v,        pentomino_w,      pentomino_x, pentomino_y,
+            pentomino_z};
+    }
 };
