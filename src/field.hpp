@@ -33,6 +33,42 @@ class Field {
         return 0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH;
     }
 
+    /// @brief 上下左右の 4 近傍に自分のブロックがあるかを返す
+    bool has_my_block_in_adjacent_neighbouring_position(const short x,
+                                                        const short y,
+                                                        const Player &player) {
+        for(unsigned short i = 0; i < 4; i++) {
+            short nx = x + adjacent_neighbouring_dx[i];
+            short ny = y + adjacent_neighbouring_dy[i];
+            if(!is_in_field(nx, ny)) {
+                continue;
+            }
+            // 上下左右の隣接マスに自分が置いていたら true を返す
+            if(_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// @brief 斜めの 4 近傍に自分のブロックがあるかを返す
+    bool has_my_block_in_diagonal_neighbouring_position(const short x,
+                                                        const short y,
+                                                        const Player &player) {
+        for(unsigned short i = 0; i < 4; i++) {
+            short nx = x + diagonal_neighbouring_dx[i];
+            short ny = y + diagonal_neighbouring_dy[i];
+            if(!is_in_field(nx, ny)) {
+                continue;
+            }
+            // 斜めの隣接マスの少なくとも 1 つに自分が置いていればよい
+            if(_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
+                return true;
+            }
+        }
+        return false;
+    }
+
   public:
     unsigned short current_turn = 0;
     Field() {}
@@ -42,40 +78,15 @@ class Field {
     /// @param x x 座標
     /// @param y y 座標
     /// @param block 使用するブロック
-    bool is_able_to_place(unsigned short x, unsigned short y,
-                          const Block &block, const Player &player) {
+    bool is_able_to_place(short x, short y, const Block &block,
+                          const Player &player) {
         assert(is_in_field(x, y));
 
-        // 上下左右の 4 近傍に自分が置いたブロックがないかチェック
-        for(unsigned short i = 0; i < 4; i++) {
-            short nx = x + adjacent_neighbouring_dx[i];
-            short ny = y + adjacent_neighbouring_dy[i];
-            if(!is_in_field(nx, ny)) {
-                continue;
-            }
-            // 上下左右の隣接マスに自分が置いていたら false を返す
-            if(_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
-                return false;
-            }
-        }
-
-        // 斜めの 4 近傍に自分が置いたブロックが少なくとも 1 つあるかチェック
-        bool has_my_block_in_diagonal_position = false;
-        for(unsigned short i = 0; i < 4; i++) {
-            short nx = x + diagonal_neighbouring_dx[i];
-            short ny = y + diagonal_neighbouring_dy[i];
-            if(!is_in_field(nx, ny)) {
-                continue;
-            }
-            // 斜めの隣接マスの少なくとも 1 つに自分が置いていればよい
-            if(_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
-                has_my_block_in_diagonal_position = true;
-                break;
-            }
-        }
-        if(current_turn > 3 and !has_my_block_in_diagonal_position) {
-            return false;
-        }
+        // 1. 上下左右の 4 近傍に自分が置いたブロックが 1 つでもあれば NG
+        // 2.
+        // ブロックを構成する各マスについて、そのいずれもが斜めに自分のブロックと接していなければ
+        // NG
+        // 3. 置きたいマスが他のブロックにすでに占有されていれば NG
 
         // 各プレイヤー 1 ターン目であれば、四隅以外は false を返す
         // 3...0
@@ -103,7 +114,18 @@ class Field {
 
         // ブロックを配置できるか (ブロックを配置したいマスがすべて 0000_0000
         // か) をチェック
-        unsigned short result = _field[x][y];
+        unsigned short field_value = _field[x][y];
+
+        // 上下左右の 4 近傍に自分が置いたブロックがないかチェック
+        bool has_my_block_in_adjacent_position =
+            has_my_block_in_adjacent_neighbouring_position(x, y, player);
+
+        // ブロックを構成する各マスについて、そのいずれかが斜めに自分のブロックと接しているかをチェック
+        // current_turn が 0, 1, 2, 3 のときは、各プレイヤー初手なので特別に true とする
+        bool has_my_block_in_diagonal_position =
+            has_my_block_in_diagonal_neighbouring_position(x, y, player) ||
+            current_turn <= 3;
+
         for(const Direction &direction : block) {
             x += direction.dx;
             y += direction.dy;
@@ -111,10 +133,19 @@ class Field {
             if(!is_in_field(x, y)) {
                 return false;
             }
-            result |= _field[x][y];
+            // 「今まで通ってきたマスの値」と OR を取る
+            field_value |= _field[x][y];
+            // 「今まで通ってきたマスが、斜めに自分のブロックと接していたかどうか」と
+            // OR を取る
+            has_my_block_in_diagonal_position |=
+                has_my_block_in_diagonal_neighbouring_position(x, y, player);
+            // 「今まで通ってきたマスの中に、自分のマスと接しているものがあるかどうか」と
+            // OR を取る
+            has_my_block_in_adjacent_position |=
+                has_my_block_in_adjacent_neighbouring_position(x, y, player);
         }
 
-        return result == 0;
+        return (field_value == 0) && has_my_block_in_diagonal_position && !has_my_block_in_adjacent_position;
     }
 
     /// @brief 座標 (x, y) にブロックを置く
@@ -196,8 +227,9 @@ class Field {
     void show() {
         for(const auto &row : _field) {
             for(const auto &cell : row) {
-                std::cerr << std::setw(2) << std::setfill('0') << (cell & 0b11) << ","
-                          << std::setw(3) << std::setfill('0') << (cell >> 2) << " ";
+                std::cerr << std::setw(2) << std::setfill('0') << (cell & 0b11)
+                          << "," << std::setw(3) << std::setfill('0')
+                          << (cell >> 2) << " ";
             }
             std::cerr << std::endl;
         }
