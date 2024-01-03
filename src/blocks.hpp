@@ -22,9 +22,7 @@ struct Block {
     const Direction& operator[](std::size_t index) const {
         return block_directions[index];
     }
-    std::size_t size() const {
-        return block_directions.size();
-    }
+    std::size_t size() const { return block_directions.size(); }
 };
 
 struct Blocks {
@@ -106,7 +104,7 @@ struct Blocks {
     // .#.
     // .s.
     // ...
-    Block pentomino_i = Block ({up, up, up, up});
+    Block pentomino_i = Block({up, up, up, up});
 
     // ....
     // .#..
@@ -177,4 +175,12 @@ struct Blocks {
     // ..#s.
     // .....
     Block pentomino_z = Block({left, up, up, left});
+
+    std::array<Block, 21> blocks = {
+        monomino,           domino,           tromino_i,   tromino_l,
+        tetromino_straight, tetromino_square, tetromino_t, tetromino_l,
+        tetromino_skew,     pentomino_f,      pentomino_i, pentomino_l,
+        pentomino_n,        pentomino_p,      pentomino_t, pentomino_u,
+        pentomino_v,        pentomino_w,      pentomino_x, pentomino_y,
+        pentomino_z};
 };
