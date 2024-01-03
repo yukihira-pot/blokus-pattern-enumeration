@@ -27,11 +27,11 @@ constexpr std::size_t FIELD_WIDTH = 20;
 class Field {
     std::array<std::array<short, FIELD_WIDTH>, FIELD_WIDTH> _field{};
 
-    bool is_in_field(unsigned short x, unsigned short y) {
+    bool is_in_field(const unsigned short x, const unsigned short y) {
         return 0 <= x and x < FIELD_WIDTH and 0 <= y and y < FIELD_WIDTH;
     }
 
-   public:
+  public:
     unsigned short current_turn = 0;
     Field() {}
 
@@ -40,49 +40,49 @@ class Field {
     /// @param x x 座標
     /// @param y y 座標
     /// @param block 使用するブロック
-    bool is_able_to_place(unsigned short x, unsigned short y, Block& block,
-                          Player& player) {
+    bool is_able_to_place(unsigned short x, unsigned short y,
+                          const Block &block, const Player &player) {
         assert(is_in_field(x, y));
 
         // 上下左右の 4 近傍に自分が置いたブロックがないかチェック
-        for (unsigned short i = 0; i < 4; i++) {
+        for(unsigned short i = 0; i < 4; i++) {
             unsigned short nx = x + adjacent_neighbouring_dx[i];
             unsigned short ny = y + adjacent_neighbouring_dy[i];
-            if (!is_in_field(nx, ny)) {
+            if(!is_in_field(nx, ny)) {
                 continue;
             }
             // 上下左右の隣接マスに自分が置いていたら false を返す
-            if (_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
+            if(_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
                 return false;
             }
         }
 
         // 斜めの 4 近傍に自分が置いたブロックが少なくとも 1 つあるかチェック
         bool has_my_block_in_diagonal_position = false;
-        for (unsigned short i = 0; i < 4; i++) {
+        for(unsigned short i = 0; i < 4; i++) {
             unsigned short nx = x + diagonal_neighbouring_dx[i];
             unsigned short ny = y + diagonal_neighbouring_dy[i];
-            if (!is_in_field(nx, ny)) {
+            if(!is_in_field(nx, ny)) {
                 continue;
             }
             // 斜めの隣接マスの少なくとも 1 つに自分が置いていればよい
-            if (_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
+            if(_field[nx][ny] != 0 and (_field[nx][ny] & 0b11) == player) {
                 has_my_block_in_diagonal_position = true;
                 break;
             }
         }
-        if (!has_my_block_in_diagonal_position) {
+        if(!has_my_block_in_diagonal_position) {
             return false;
         }
 
         // ブロックを配置できるか (ブロックを配置したいマスがすべて 0000_0000
         // か) をチェック
         unsigned short result = _field[x][y];
-        for (const Direction& direction : block) {
+        for(const Direction &direction : block) {
             x += direction.dx;
             y += direction.dy;
             // フィールド外からはみ出ていたら false を返す
-            if (!is_in_field(x, y)) {
+            if(!is_in_field(x, y)) {
                 return false;
             }
             result |= _field[x][y];
@@ -95,8 +95,8 @@ class Field {
     /// @param y y 座標
     /// @param block 置くべきブロック
     /// @param player ブロックを置くプレイヤー
-    void place(unsigned short x, unsigned short y, Block& block,
-               Player& player) {
+    void place(unsigned short x, unsigned short y, const Block &block,
+               const Player &player) {
         assert(is_able_to_place(x, y, block, player));
         // ターンを 1 増やす
         current_turn++;
@@ -104,7 +104,7 @@ class Field {
         // をプレイヤーの番号としたもの
         unsigned short field_value = (current_turn << 2) | player;
         _field[x][y] = field_value;
-        for (const Direction& direction : block) {
+        for(const Direction &direction : block) {
             x += direction.dx;
             y += direction.dy;
             _field[x][y] = field_value;
@@ -115,18 +115,18 @@ class Field {
     /// @param x x 座標
     /// @param y y 座標
     /// @param block 除去するブロック
-    bool is_able_to_remove(unsigned short x, unsigned short y, Block& block) {
+    bool is_able_to_remove(unsigned short x, unsigned short y, Block &block) {
         assert(is_in_field(x, y));
         unsigned short field_value = _field[x][y];
-        for (const Direction& direction : block) {
+        for(const Direction &direction : block) {
             x += direction.dx;
             y += direction.dy;
             // フィールド外からはみ出ていたら false を返す
-            if (!is_in_field(x, y)) {
+            if(!is_in_field(x, y)) {
                 return false;
             }
             // 指定していた形の通りにブロックが置かれていなければ false を返す
-            if (_field[x][y] != field_value) {
+            if(_field[x][y] != field_value) {
                 return false;
             }
         }
@@ -137,11 +137,11 @@ class Field {
     /// @param x x 座標
     /// @param y y 座標
     /// @param block 除去するブロック
-    void remove(unsigned short x, unsigned short y, Block& block) {
+    void remove(unsigned short x, unsigned short y, Block &block) {
         assert(is_able_to_remove(x, y, block));
         // ブロックが置いてあるマスをすべて 0 にする
         _field[x][y] = 0;
-        for (const Direction& direction : block) {
+        for(const Direction &direction : block) {
             x += direction.dx;
             y += direction.dy;
             _field[x][y] = 0;
@@ -150,14 +150,14 @@ class Field {
 
     /// @brief _field を指定したファイルパスに出力する
     /// @param file_path 出力先のファイルパス
-    void save_to_file(const std::string& file_path) {
+    void save_to_file(const std::string &file_path) {
         std::ofstream file(file_path);
-        if (!file) {
+        if(!file) {
             throw std::runtime_error("Failed to open file: " + file_path);
         }
 
-        for (const auto& row : _field) {
-            for (const auto& cell : row) {
+        for(const auto &row : _field) {
+            for(const auto &cell : row) {
                 file << cell << ' ';
             }
             file << '\n';
