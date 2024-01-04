@@ -11,8 +11,8 @@ class Direction {
 };
 
 constexpr unsigned short DIRECTION_SIZE = 4;
-Direction default_up(1, 0);
-Direction default_down(-1, 0);
+Direction default_up(-1, 0);
+Direction default_down(1, 0);
 Direction default_right(0, 1);
 Direction default_left(0, -1);
 
