@@ -76,9 +76,9 @@ struct Blocks {
         assert(0 <= mode_ and mode_ <= 7);
         Directions directions(mode_);
         up = directions.directions[0];
-        down = directions.directions[1];
-        right = directions.directions[2];
-        left = directions.directions[3];
+        left = directions.directions[1];
+        down = directions.directions[2];
+        right = directions.directions[3];
         setup_blocks();
     }
 
