@@ -32,15 +32,15 @@ class Directions {
         // mode が 0 から 7 で 4 方位と裏表を設定する
         if (mode <= 3) {
             directions_impl[0] = Direction(default_up.dx, default_up.dy);
-            directions_impl[1] = Direction(default_down.dx, default_down.dy);
-            directions_impl[2] = Direction(default_right.dx, default_right.dy);
-            directions_impl[3] = Direction(default_left.dx, default_left.dy);
+            directions_impl[1] = Direction(default_left.dx, default_left.dy);
+            directions_impl[2] = Direction(default_down.dx, default_down.dy);
+            directions_impl[3] = Direction(default_right.dx, default_right.dy);
         } else {
             // 左右を逆にして裏返しとする
             directions_impl[0] = Direction(default_up.dx, default_up.dy);
-            directions_impl[1] = Direction(default_down.dx, default_down.dy);
-            directions_impl[2] = Direction(default_left.dx, default_left.dy);
-            directions_impl[3] = Direction(default_right.dx, default_right.dy);
+            directions_impl[1] = Direction(default_right.dx, default_right.dy);
+            directions_impl[2] = Direction(default_down.dx, default_down.dy);
+            directions_impl[3] = Direction(default_left.dx, default_left.dy);
         }
         for (unsigned short i = 0; i < DIRECTION_SIZE; i++) {
             directions[i] = directions_impl[(i + mode) % DIRECTION_SIZE];
