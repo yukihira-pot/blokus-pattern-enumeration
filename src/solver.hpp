@@ -24,16 +24,16 @@ class Solver {
     std::array<std::array<bool, BLOCK_SIZE>, PLAYER_SIZE> _used{};
     unsigned long long total_steps = 0;
 
-  public:
+   public:
     Solver() { setup_blocks(); }
     void solve() { place(PLAYER_A); }
 
-  private:
+   private:
     /// @brief player を指定し、バックトラックでブロックを置く
     /// @param player
     void place(const Player &player) {
         // すべてブロックを使っていれば return
-        if(is_all_blocks_used()) {
+        if (is_all_blocks_used()) {
             auto t = std::time(nullptr);
             auto tm = *std::localtime(&t);
             std::ostringstream oss;
@@ -42,17 +42,20 @@ class Solver {
             _field.save_to_file("../output/" + filename);
             return;
         }
-        for(unsigned short x = 0; x < FIELD_WIDTH; x++) {
-            for(unsigned short y = 0; y < FIELD_WIDTH; y++) {
-                for(unsigned short block_idx = 0; block_idx < TOTAL_BLOCK_SIZE;
-                    block_idx++) {
-                    if(_used[player][block_idx / BLOCK_MODE_SIZE]) {
+        for (unsigned short block_idx = 0; block_idx < TOTAL_BLOCK_SIZE;
+             block_idx++) {
+            for (unsigned short x = 0; x < FIELD_WIDTH; x++) {
+                for (unsigned short y = 0; y < FIELD_WIDTH; y++) {
+                    Block &candidate_block = _blocks[player][block_idx];
+                    unsigned short use_idx = block_idx / BLOCK_MODE_SIZE;
+
+                    if (_used[player][use_idx]) {
                         continue;
                     }
-                    if(_field.is_able_to_place(x, y, _blocks[player][block_idx],
-                                               player)) {
+                    if (_field.is_able_to_place(x, y, candidate_block,
+                                                player)) {
                         total_steps++;
-                        if(total_steps == 10) {
+                        if (total_steps == 20) {
                             auto t = std::time(nullptr);
                             auto tm = *std::localtime(&t);
                             std::ostringstream oss;
@@ -62,13 +65,13 @@ class Solver {
                             exit(0);
                         }
                         // ブロックを配置
-                        _field.place(x, y, _blocks[player][block_idx], player);
-                        _used[player][block_idx / BLOCK_MODE_SIZE] = true;
+                        _field.place(x, y, candidate_block, player);
+                        _used[player][use_idx] = true;
                         place(next_player(player));
                         // _field.show();
                         // ブロックを削除 (バックトラック)
-                        _field.remove(x, y, _blocks[player][block_idx]);
-                        _used[player][block_idx / BLOCK_MODE_SIZE] = false;
+                        _field.remove(x, y, candidate_block);
+                        _used[player][use_idx] = false;
                     }
                 }
             }
@@ -79,10 +82,10 @@ class Solver {
     /// の各ブロックを割り当てる
     void setup_blocks() {
         // TOTAL_BLOCK_SIZE == BLOCK_SIZE * BLOCK_MODE_SIZE
-        for(unsigned short player = 0; player < PLAYER_SIZE; player++) {
-            for(unsigned short mode = 0; mode < BLOCK_MODE_SIZE; mode++) {
+        for (unsigned short player = 0; player < PLAYER_SIZE; player++) {
+            for (unsigned short mode = 0; mode < BLOCK_MODE_SIZE; mode++) {
                 Blocks blocks_impl = Blocks(mode);
-                for(unsigned short i = 0; i < BLOCK_SIZE; i++) {
+                for (unsigned short i = 0; i < BLOCK_SIZE; i++) {
                     _blocks[player][BLOCK_MODE_SIZE * i + mode] =
                         blocks_impl[i];
                 }
