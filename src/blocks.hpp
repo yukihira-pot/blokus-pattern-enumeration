@@ -1,4 +1,6 @@
+#include <array>
 #include <cassert>
+#include <iostream>
 #include <vector>
 
 #pragma once
@@ -27,7 +29,42 @@ struct Block {
         return block_directions[index];
     }
     std::size_t size() const { return block_directions.size(); }
+
+    friend std::ostream& operator<<(std::ostream&, const Block&);
 };
+
+std::ostream& operator<<(std::ostream& stream, const Block& block) {
+    constexpr short DISP_WIDTH = 20;
+    std::array<std::array<char, DISP_WIDTH>, DISP_WIDTH> disp = {'.'};
+    short x = DISP_WIDTH / 2;
+    short y = DISP_WIDTH / 2;
+    disp[x][y] = '#';
+    for (const Direction& direction : block) {
+        x += direction.dx;
+        y += direction.dy;
+        disp[x][y] = '#';
+    }
+    short min_row = DISP_WIDTH, max_row = 0;
+    short min_col = DISP_WIDTH, max_col = 0;
+    for (short i = 0; i < DISP_WIDTH; i++) {
+        for (short j = 0; j < DISP_WIDTH; j++) {
+            if (disp[i][j] == '#') {
+                min_row = std::min(min_row, i);
+                max_row = std::max(max_row, i);
+                min_col = std::min(min_col, j);
+                max_col = std::max(max_col, j);
+            }
+        }
+    }
+    // [min_row-1, max_row+1], [min_col-1, max_col+1] の範囲を出力
+    for (short i = min_row - 1; i <= max_row + 1; i++) {
+        for (short j = min_col - 1; j <= max_col + 1; j++) {
+            stream << disp[i][j];
+        }
+        stream << "\n";
+    }
+    return stream;
+}
 
 struct Blocks {
     Direction up, down, right, left;
