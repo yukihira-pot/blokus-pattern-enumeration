@@ -88,12 +88,6 @@ class Solver {
                 }
             }
         }
-        for (auto blocks_for_each_player : _blocks) {
-            for (Block &block : blocks_for_each_player) {
-                std::cerr << block << "\n";
-            }
-            std::cerr << "--------" << "\n";
-        }
     }
 
     bool is_block_used(const std::array<bool, BLOCK_SIZE> &block) {
