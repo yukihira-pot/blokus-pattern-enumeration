@@ -35,7 +35,7 @@ struct Block {
 
 std::ostream& operator<<(std::ostream& stream, const Block& block) {
     constexpr short DISP_WIDTH = 20;
-    std::array<std::array<char, DISP_WIDTH>, DISP_WIDTH> disp = {'.'};
+    std::array<std::array<char, DISP_WIDTH>, DISP_WIDTH> disp{};
     short x = DISP_WIDTH / 2;
     short y = DISP_WIDTH / 2;
     disp[x][y] = '#';
@@ -53,6 +53,8 @@ std::ostream& operator<<(std::ostream& stream, const Block& block) {
                 max_row = std::max(max_row, i);
                 min_col = std::min(min_col, j);
                 max_col = std::max(max_col, j);
+            } else {
+                disp[i][j] = '.';
             }
         }
     }
