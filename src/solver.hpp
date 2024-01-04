@@ -42,6 +42,14 @@ class Solver {
             _field.save_to_file("../output/" + filename);
             return;
         }
+        if (total_steps % 100000 == 0) {
+            auto t = std::time(nullptr);
+            auto tm = *std::localtime(&t);
+            std::ostringstream oss;
+            oss << std::put_time(&tm, "%Y-%m-%d-%H-%M-%S");
+            std::string filename = oss.str();
+            _field.save_to_file("../output/" + filename);
+        }
         for (unsigned short block_idx = 0; block_idx < TOTAL_BLOCK_SIZE;
              block_idx++) {
             for (unsigned short x = 0; x < FIELD_WIDTH; x++) {
@@ -55,15 +63,6 @@ class Solver {
                     if (_field.is_able_to_place(x, y, candidate_block,
                                                 player)) {
                         total_steps++;
-                        if (total_steps == 20) {
-                            auto t = std::time(nullptr);
-                            auto tm = *std::localtime(&t);
-                            std::ostringstream oss;
-                            oss << std::put_time(&tm, "%Y-%m-%d-%H-%M-%S");
-                            std::string filename = oss.str();
-                            _field.save_to_file("../output/" + filename);
-                            exit(0);
-                        }
                         // ブロックを配置
                         _field.place(x, y, candidate_block, player);
                         _used[player][use_idx] = true;
