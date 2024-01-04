@@ -38,7 +38,7 @@ std::ostream& operator<<(std::ostream& stream, const Block& block) {
     std::array<std::array<char, DISP_WIDTH>, DISP_WIDTH> disp{};
     short x = DISP_WIDTH / 2;
     short y = DISP_WIDTH / 2;
-    disp[x][y] = '#';
+    disp[x][y] = 's';
     for (const Direction& direction : block) {
         x += direction.dx;
         y += direction.dy;
@@ -48,7 +48,7 @@ std::ostream& operator<<(std::ostream& stream, const Block& block) {
     short min_col = DISP_WIDTH, max_col = 0;
     for (short i = 0; i < DISP_WIDTH; i++) {
         for (short j = 0; j < DISP_WIDTH; j++) {
-            if (disp[i][j] == '#') {
+            if (disp[i][j] == '#' or disp[i][j] == 's') {
                 min_row = std::min(min_row, i);
                 max_row = std::max(max_row, i);
                 min_col = std::min(min_col, j);
